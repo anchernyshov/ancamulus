@@ -1,5 +1,7 @@
 package com.github.ancamulus.viewmodel;
 
+import android.os.Handler;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -11,6 +13,7 @@ public class LoginActivityViewModel extends ViewModel {
     MutableLiveData<Boolean> usernameValid  = new MutableLiveData<>(false);
     MutableLiveData<Boolean> passwordValid = new MutableLiveData<>(false);
     MutableLiveData<Boolean> loginButtonEnabled = new MutableLiveData<>(false);
+    MutableLiveData<Boolean> loading  = new MutableLiveData<>(false);
 
     public void setUsername(String s) {
         username.postValue(s);
@@ -32,5 +35,22 @@ public class LoginActivityViewModel extends ViewModel {
 
     public LiveData<Boolean> isLoginButtonEnabled() {
         return loginButtonEnabled;
+    }
+
+    public LiveData<Boolean> isLoading() {
+        return loading;
+    }
+
+    public void onLoginButtonClicked() {
+        loginButtonEnabled.postValue(false);
+        loading.postValue(true);
+        //TODO: actual API request
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                loginButtonEnabled.postValue(true);
+                loading.postValue(false);
+            }
+        }, 2000);
     }
 }

@@ -7,6 +7,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
@@ -19,6 +20,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private EditText usernameEditText;
     private EditText passwordEditText;
+    private ProgressBar progressBar;
     private Button loginButton;
     private LoginActivityViewModel viewModel;
 
@@ -31,6 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         usernameEditText = findViewById(R.id.activity_login_et_username);
         passwordEditText = findViewById(R.id.activity_login_et_password);
+        progressBar = findViewById(R.id.activity_login_pb_loading);
         loginButton = findViewById(R.id.activity_login_btn_login);
 
         usernameEditText.addTextChangedListener(new TextWatcher() {
@@ -62,11 +65,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 loginButton.setEnabled(b);
             }
         });
+
+        LiveData<Boolean> loadingBarVisible = viewModel.isLoading();
+        loadingBarVisible.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean b) {
+                progressBar.setVisibility(b ? ProgressBar.VISIBLE : ProgressBar.GONE);
+            }
+        });
+
+        loginButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
-
+        viewModel.onLoginButtonClicked();
     }
 
     @Override
